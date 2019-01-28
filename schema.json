@@ -1,0 +1,30 @@
+{
+  "nicassaParserDB": {
+    "formatVersion": "1.0",
+    "lastUpdateUTC": "Fri, 30 Nov 2018 15:01:17 GMT",
+    "sequelizeConnect": {
+      "database": "database",
+      "username": "username",
+      "password": "password",
+      "options": {
+        "host": "localhost",
+        "dialect": "'mysql'|'mariadb'|'sqlite'|'postgres'|'mssql'",
+        "pool": {
+          "max": 5,
+          "min": 0,
+          "idle": 10000
+        },
+        "storage": "path/to/database.sqlite"
+      },
+      "connectionUri": "postgres://user:pass@example.com:5432/dbname"
+    },
+    "filter": {
+      "excludeTables": false,
+      "excludeViews": false,
+      "exculdeColumns": [],
+      "exculde": [],
+      "only": []
+    },
+    "forceViewColumnsNotNull": false
+  }
+}
