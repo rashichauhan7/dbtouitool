@@ -1,6 +1,6 @@
 module.exports = function(app, tables) {
     app.get('/api/:collection', getCollection);
-    app.get('/api/:collection/:cid', getCollection);
+    app.get('/api/:collection/:cid', getCollectionEntryById);
 
     function getCollection(req, res) {
         collection = tables[ req.params['collection']];
@@ -8,8 +8,9 @@ module.exports = function(app, tables) {
     }
 
     function getCollectionEntryById(req, res) {
-        collection = req.params['collection'];
+        collection = tables[ req.params['collection']];
         id = req.params['cid'];
-
+        entry = collection[id];
+        res.send(entry);
     }
 }

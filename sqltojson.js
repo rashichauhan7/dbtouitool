@@ -15,6 +15,7 @@
             // Collapse statements (TO DO: Convert this to a single regex)
             .replace(/;\s*[\r\n]/gm, ";;")
             .replace(/[\r\n]/gm, " ")
+            .replace(/--/gm, "\n")
             .replace(/;;\s?/gm, ";\n")
             // Extract quoted string values and replace with placeholders
             .replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, function(m) {matches.push(_.trim(m, "'\"")); return "'{{"+(matches.length-1)+"}}'";});
@@ -58,90 +59,90 @@
                     if (!tables[name].header.length) throw "No columns found for table " + name;
                 }
 
-                // INSERT INTO <table> VALUES (<cell>, ...)
-                else if (words.length >= 4 &&
-                    words[0].toUpperCase() == 'INSERT' &&
-                    words[1].toUpperCase() == 'INTO' &&
-                    words[2].match(inQuotes) &&
-                    words[3].toUpperCase() == 'VALUES') {
-
-                    var name = _.trim(words[2], "`'\"");
-                    if (!tables[name])
-                        throw "Table "+name+" was not defined in a CREATE TABLE.";
-                    var table = tables[name];
-
-                    var i = 3;
-                    while (words[i].toUpperCase() != 'VALUES' && i < words.length) i++;
-                    if (i == words.length || words[i].toUpperCase() != 'VALUES')
-                        throw "Error parsing INSERT INTO statement. Cannot find VALUES."
-                    i += 1;
-                    if (i == words.length)
-                        throw "Error parsing INSERT INTO statement. No values found after VALUES.";
-
-                    var records = _.trim(words.slice(i).join(" "))
-                        .replace(/(\))\s*,\s*(\()/g, "),(")
-                        .replace(/^\(/, "")
-                        .replace(/\)\s*;?$/, "")
-                        .replace(/\(\s*(NULL)\s*/gi, '({{NULL}}')
-                        .replace(/,\s*(NULL)\s*/gi, ',{{NULL}}')
-                        .split("),(");
-
-                    _.each(records, function(str) {
-                        var values = _.words(str, ",");
-                        tables[name].values.push(_.map(values, function(value) {
-                            return _.trim(value, " `'\"");
-                        }));
-                    });
-                }
-
-                // INSERT INTO <table> (<col>, ...) VALUES (<cell>, ...), ...
-                else if (words.length >= 4 &&
-                    words[0].toUpperCase() == 'INSERT' &&
-                    words[1].toUpperCase() == 'INTO' &&
-                    words[2].match(inQuotes) &&
-                    _.startsWith(words[3], "(")) {
-
-                    var name = _.trim(words[2], "`'\"");
-                    if (!tables[name])
-                        throw "Table "+name+" was not defined in a CREATE TABLE.";
-                    var table = tables[name];
-
-                    var i = 3;
-                    while (words[i].toUpperCase() != 'VALUES' && i < words.length) i++;
-                    if (i == words.length || words[i].toUpperCase() != 'VALUES')
-                        throw "Error parsing INSERT INTO statement. Cannot find VALUES."
-
-                    var cols = _.map(words.slice(3, i), function(value) {
-                        return _.trim(value, "\(\), `'\"");
-                    });
-                    if (!cols.length)
-                        throw "Error parsing INSERT INTO statement. No column names found for table " + name + " in " + words[3];words[3]
-
-                    i += 1;
-                    if (i == words.length)
-                        throw "Error parsing INSERT INTO statement. No values found after VALUES.";
-
-                    var records = _.trim(words.slice(i).join(" "))
-                        .replace(/(\))\s*,\s*(\()/g, "),(")
-                        .replace(/^\(/, "")
-                        .replace(/\)\s*;?$/, "")
-                        .replace(/\(\s*(NULL)\s*/gi, '({{NULL}}')
-                        .replace(/,\s*(NULL)\s*/gi, ',{{NULL}}')
-                        .split("),(");
-
-                    _.each(records, function(str) {
-                        var values = _.words(str, ",");
-                        if (values.length != cols.length)
-                            throw "Error parsing INSERT INTO statement. Values " + str + " does not have the same number of items as columns " + words[3];
-                        var record = {};
-                        _.each(tables[name].header, function(col) {
-                            var index = _.indexOf(cols, col),
-                                value = index != -1 ? _.trim(values[index], " `'\"") : null;
-                            record[col] = value;
-                        });
-                        tables[name].values.push(_.values(record));
-                    });
-                }
+                // // INSERT INTO <table> VALUES (<cell>, ...)
+                // else if (words.length >= 4 &&
+                //     words[0].toUpperCase() == 'INSERT' &&
+                //     words[1].toUpperCase() == 'INTO' &&
+                //     words[2].match(inQuotes) &&
+                //     words[3].toUpperCase() == 'VALUES') {
+                //
+                //     var name = _.trim(words[2], "`'\"");
+                //     if (!tables[name])
+                //         throw "Table "+name+" was not defined in a CREATE TABLE.";
+                //     var table = tables[name];
+                //
+                //     var i = 3;
+                //     while (words[i].toUpperCase() != 'VALUES' && i < words.length) i++;
+                //     if (i == words.length || words[i].toUpperCase() != 'VALUES')
+                //         throw "Error parsing INSERT INTO statement. Cannot find VALUES."
+                //     i += 1;
+                //     if (i == words.length)
+                //         throw "Error parsing INSERT INTO statement. No values found after VALUES.";
+                //
+                //     var records = _.trim(words.slice(i).join(" "))
+                //         .replace(/(\))\s*,\s*(\()/g, "),(")
+                //         .replace(/^\(/, "")
+                //         .replace(/\)\s*;?$/, "")
+                //         .replace(/\(\s*(NULL)\s*/gi, '({{NULL}}')
+                //         .replace(/,\s*(NULL)\s*/gi, ',{{NULL}}')
+                //         .split("),(");
+                //
+                //     _.each(records, function(str) {
+                //         var values = _.words(str, ",");
+                //         tables[name].values.push(_.map(values, function(value) {
+                //             return _.trim(value, " `'\"");
+                //         }));
+                //     });
+                // }
+                //
+                // // INSERT INTO <table> (<col>, ...) VALUES (<cell>, ...), ...
+                // else if (words.length >= 4 &&
+                //     words[0].toUpperCase() == 'INSERT' &&
+                //     words[1].toUpperCase() == 'INTO' &&
+                //     words[2].match(inQuotes) &&
+                //     _.startsWith(words[3], "(")) {
+                //
+                //     var name = _.trim(words[2], "`'\"");
+                //     if (!tables[name])
+                //         throw "Table "+name+" was not defined in a CREATE TABLE.";
+                //     var table = tables[name];
+                //
+                //     var i = 3;
+                //     while (words[i].toUpperCase() != 'VALUES' && i < words.length) i++;
+                //     if (i == words.length || words[i].toUpperCase() != 'VALUES')
+                //         throw "Error parsing INSERT INTO statement. Cannot find VALUES."
+                //
+                //     var cols = _.map(words.slice(3, i), function(value) {
+                //         return _.trim(value, "\(\), `'\"");
+                //     });
+                //     if (!cols.length)
+                //         throw "Error parsing INSERT INTO statement. No column names found for table " + name + " in " + words[3];words[3]
+                //
+                //     i += 1;
+                //     if (i == words.length)
+                //         throw "Error parsing INSERT INTO statement. No values found after VALUES.";
+                //
+                //     var records = _.trim(words.slice(i).join(" "))
+                //         .replace(/(\))\s*,\s*(\()/g, "),(")
+                //         .replace(/^\(/, "")
+                //         .replace(/\)\s*;?$/, "")
+                //         .replace(/\(\s*(NULL)\s*/gi, '({{NULL}}')
+                //         .replace(/,\s*(NULL)\s*/gi, ',{{NULL}}')
+                //         .split("),(");
+                //
+                //     _.each(records, function(str) {
+                //         var values = _.words(str, ",");
+                //         if (values.length != cols.length)
+                //             throw "Error parsing INSERT INTO statement. Values " + str + " does not have the same number of items as columns " + words[3];
+                //         var record = {};
+                //         _.each(tables[name].header, function(col) {
+                //             var index = _.indexOf(cols, col),
+                //                 value = index != -1 ? _.trim(values[index], " `'\"") : null;
+                //             record[col] = value;
+                //         });
+                //         tables[name].values.push(_.values(record));
+                //     });
+                // }
             }
         } catch(error) {
             throw "Error: " + error + "\n..." + line;
