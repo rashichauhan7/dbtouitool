@@ -81,7 +81,15 @@ function getTableNames() {
  )}
 
 
-
+function insertIntoTable(table, entry) {
+    return new Promise(function (resolve) {
+        mysqlJson.query("Insert into "+table+" values ("+entry+")", function (err, response) {
+            response = JSON.parse(JSON.stringify(response));
+            console.log(err);
+            resolve(response);
+        })
+    })
+}
 
 
 
@@ -89,7 +97,8 @@ function getTableNames() {
 module.exports = {
     gt,
     getTableNames,
-    loop
+    loop,
+    insertIntoTable
 };
 
 

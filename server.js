@@ -23,36 +23,27 @@ app.use(session({
     secret: 'any string'
 }));
 
-app.get('/', function(req, res) {
-    res.send('Hello World!')
-});
-
 
 
 app.listen(process.env.PORT || 4000)
-app.listen(5000);
-
-
-
-
 
 var service  = require('./services/server.services');
-
-
 var mysqlDb = require('./connectToMysql');
 
-
-mysqlDb.getTableNames().then((t) => {
-    mysqlDb.loop(t).then((t) => {
-            console.log(t);
-            service(app, t);
-        });
-});
-
-setTimeout(function(){
-    mysqlDb.getTableNames().then((t) => {
-        mysqlDb.gt(t).then((structure)=> {
-            console.log(structure)
+function init() {
+    mysqlDb.getTableNames().then((tn) => {
+        mysqlDb.loop(tn).then((t) => {
+            setTimeout(function () {
+                mysqlDb.gt(tn).then((structure) => {
+                    service(app, t, structure, mysqlDb)
+                });
+            }, 2000);
         });
     });
-}, 2000);
+}
+init();
+
+module.exports ={
+    init
+}
+
