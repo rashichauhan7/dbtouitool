@@ -24,18 +24,17 @@ app.use(session({
 }));
 
 
-
 app.listen(process.env.PORT || 4000)
 
 var service  = require('./services/server.services');
 var mysqlDb = require('./connectToMysql');
 
 function init() {
-    mysqlDb.getTableNames().then((tn) => {
-        mysqlDb.loop(tn).then((t) => {
+    mysqlDb.getTableNames().then((tableNames) => {
+        mysqlDb.loop(tableNames).then((tableName) => {
             setTimeout(function () {
-                mysqlDb.gt(tn).then((structure) => {
-                    service(app, t, structure, mysqlDb)
+                mysqlDb.getTableStructure(tableNames).then((structure) => {
+                    service(app, tableName, structure, mysqlDb)
                 });
             }, 2000);
         });
