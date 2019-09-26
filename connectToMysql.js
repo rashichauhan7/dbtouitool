@@ -1,25 +1,21 @@
-var MysqlJson = require('mysql-json');
-var mysqlJson = new MysqlJson({
-    host: 'us-cdbr-iron-east-04.cleardb.net',
-    user: 'b645f03867d471',
-    password: '4cdaa4d1',
-    database: 'heroku_b9591a250142bf1'
-});
+const connection = require('./connectToDB');
 
 function getTableNames() {
-    return new Promise(function(resolve) {
+    return new Promise(function (resolve) {
         var tables = [];
-        mysqlJson.query("show tables", function (err, response) {
-                response = JSON.parse(JSON.stringify(response));
-                for (var i = 0; i < response.length; i++) {
-                    tables[i] = Object.values(response[i])[0];
-                }
-                resolve(tables);
+        connection.query("show tables", function (err, response) {
+            response = JSON.parse(JSON.stringify(response));
+            for (var i = 0; i < response.length; i++) {
+                tables[i] = Object.values(response[i])[0];
             }
-        )}
-    )}
+            resolve(tables);
+        }
+        )
+    }
+    )
+}
 
-function loop (tables) {
+function loop(tables) {
     return new Promise((resolve) => {
         let P = [];
         for (i = 0; i < tables.length; i++) {
@@ -28,7 +24,7 @@ function loop (tables) {
         Promise.all(P).then((t) => {
             table = {};
             for (i = 0; i < tables.length; i++) {
-                table[tables[i]] =t[i];
+                table[tables[i]] = t[i];
             }
             resolve(table);
         })
@@ -36,9 +32,9 @@ function loop (tables) {
 }
 
 function getTableData(tables) {
-    return new Promise((resolve) =>{
-        mysqlJson.query("SELECT * FROM " + tables, function (err, response) {
-            resolve( Object.values(response));
+    return new Promise((resolve) => {
+        connection.query("SELECT * FROM " + tables, function (err, response) {
+            resolve(Object.values(response));
         })
     })
 }
@@ -46,7 +42,7 @@ function getTableData(tables) {
 
 function loopArray(table, structure) {
     return new Promise((resolve => {
-        mysqlJson.query("describe " + table, function (err, response) {
+        connection.query("describe " + table, function (err, response) {
             response = JSON.parse(JSON.stringify(response));
             for (var j = 0; j < response.length; j++) {
                 structure[table][j] = {};
@@ -80,7 +76,7 @@ function getTableStructure(tables) {
 
 function insertIntoTable(table, entry) {
     return new Promise(function (resolve) {
-        mysqlJson.query("Insert into "+table+" values ("+entry+")", function (err, response) {
+        connection.query("Insert into " + table + " values (" + entry + ")", function (err, response) {
             response = JSON.parse(JSON.stringify(response));
             console.log(err);
             resolve(response);

@@ -1,10 +1,10 @@
-module.exports = function(app, table, structure, tableConnection) {
+module.exports = function (app, table, structure, tableConnection) {
     tables = table;
 
 
     app.get('/api/structure', getStructure);
     app.get('/api/structure/:collection', getCollectionStructure);
-    app.get('/api/collection/:collection', getCollection);
+    // app.get('/api/collection/:collection', getCollection);
     app.get('/api/collection/:collection/:cid', getCollectionEntryById);
     app.post('/api/collection/:collection/insert', createEntryCollection);
 
@@ -12,12 +12,12 @@ module.exports = function(app, table, structure, tableConnection) {
 
 
     function getCollection(req, res) {
-        collection = tables[ req.params['collection']];
+        collection = tables[req.params['collection']];
         res.send(collection);
     }
 
     function getCollectionEntryById(req, res) {
-        collection = tables[ req.params['collection']];
+        collection = tables[req.params['collection']];
         id = req.params['cid'];
         entry = collection[id];
         res.send(entry);
@@ -35,8 +35,8 @@ module.exports = function(app, table, structure, tableConnection) {
         table = req.params['collection'];
         entry = "";
         values = req.body
-        Object.keys(values).forEach(function(key) {
-            if(typeof (values[key]) == "string")
+        Object.keys(values).forEach(function (key) {
+            if (typeof (values[key]) == "string")
                 entry += ", '" + values[key] + "'";
             else
                 entry += ", " + values[key];
