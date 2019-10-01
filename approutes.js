@@ -2,6 +2,13 @@
 
 module.exports = function (app) {
 
+  // structure routes
+  const structure = require('./services/structure.service.server')
+  app.route('/api/structure')
+    .get(structure.getStructure);
+  app.route('/api/structure/:collection')
+    .get(structure.getCollectionStructure);
+
   // collection routes
   const collection = require('./services/collection.service.server');
   app.route('/api/collection')
@@ -11,7 +18,11 @@ module.exports = function (app) {
     .put(collection.updateCollection)
     .delete(collection.deleteCollection);
 
-  // const services = require('./server.services')
-  // app.get('/api/collection/:collection/:cid', services.getCollectionEntryById);
 
+  // table routes - DML queries
+  const entry = require('./services/entry.service.server');
+  app.get('/api/collection/:collection/:entryId', entry.getEntryById);
+  app.post('/api/collection/:collection/insert', entry.createEntry);
+  app.put('/api/collection/:collection/update', entry.updateEntry);
+  app.delete('/api/collection/:collection/delete', entry.deleteEntry);
 };

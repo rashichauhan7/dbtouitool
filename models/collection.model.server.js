@@ -3,8 +3,9 @@
 _ = require('lodash');
 connection = require('../connectToDB');
 
-//Collection object constructor
 class Collection {
+
+  //Collection object constructor
   constructor(collection) {
     this.name = collection.name;
     this.primarykey = _.has(collection, 'primarykey') ? collection.primarykey : null;
