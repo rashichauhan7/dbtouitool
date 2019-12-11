@@ -1,14 +1,10 @@
 # DB to UI tool
 
----
-
 ## Introduction
 
 - This backend is all built in NodeJS.
 - All the necessary node modules should be installed with a one-time `npm install`.
 - The server can be started with a `npm start` to start reaching the endpoints.
-
----
 
 ## REST APIs
 
