@@ -8,7 +8,7 @@ function getStructure(req, res) {
 }
 
 function getCollectionStructure(req, res) {
-  const collectionName = req.params['collection'];
+  const collectionName = req.params['collectionName'];
   Structure.getCollectionStructure(collectionName, function (err, collectionStructure) {
     if (err) res.send(err);
     else res.json(collectionStructure);

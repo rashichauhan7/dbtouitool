@@ -28,7 +28,7 @@ class Collection {
 }
 
 function createCollection(tablename, attributes, result) {
-  const query = "CREATE TABLE " + tablename + " " + attributes;
+  const query = "CREATE TABLE IF NOT EXISTS " + tablename + " " + attributes;
   connection.query(query, function (err, value) {
     if (err) result(err, null);
     else result(null, value);

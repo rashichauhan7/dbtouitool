@@ -4,25 +4,26 @@ module.exports = function (app) {
 
   // structure routes
   const structure = require('./services/structure.service.server')
-  app.route('/api/structure')
+  app.route('/api/_structure')
     .get(structure.getStructure);
-  app.route('/api/structure/:collection')
+  app.route('/api/_structure/:collectionName')
     .get(structure.getCollectionStructure);
 
-  // collection routes
+  // collection routes - DDL queries
   const collection = require('./services/collection.service.server');
-  app.route('/api/collection')
+  app.route('/api/_collections')
     .post(collection.createCollection);
-  app.route('/api/collection/:collectionName')
+  app.route('/api/_collections/:collectionName')
     .get(collection.readCollection)
     .put(collection.updateCollection)
     .delete(collection.deleteCollection);
 
-
   // table routes - DML queries
   const entry = require('./services/entry.service.server');
-  app.get('/api/collection/:collection/:entryId', entry.getEntryById);
-  app.post('/api/collection/:collection/insert', entry.createEntry);
-  app.put('/api/collection/:collection/update', entry.updateEntry);
-  app.delete('/api/collection/:collection/delete', entry.deleteEntry);
+  app.get('/api/:collectionName/:entryId', entry.getEntryById);
+  app.route('/api/:collectionName')
+    .get(entry.getEntries)
+    .post(entry.createEntry)
+    .put(entry.updateEntry)
+    .delete(entry.deleteEntry);
 };
