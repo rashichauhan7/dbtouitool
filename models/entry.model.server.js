@@ -45,6 +45,14 @@ function getEntryById(tableName, entryId, result) {
   });
 }
 
+function getEntries(tableName, result) {
+  const query = "SELECT * FROM " + tableName;
+  connection.query(query, function (err, value) {
+    if (err) result(err, null);
+    else result(null, value);
+  });
+}
+
 function updateEntry(tableName, entry, result) {
   const values = getUpdateString(entry.values);
   const condition = entry.condition;
@@ -67,6 +75,7 @@ function deleteEntry(tableName, entry, result) {
 module.exports = {
   createEntry,
   getEntryById,
+  getEntries,
   updateEntry,
   deleteEntry
 }
