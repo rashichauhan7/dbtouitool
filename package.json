@@ -18,7 +18,7 @@
   "homepage": "https://github.com/rashichauhan7/dbtouitool#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-session": "^1.15.6",
     "mongoose": "^5.7.5",
     "mysql-json": "^0.1.3",
